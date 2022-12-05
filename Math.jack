@@ -11,6 +11,7 @@ class Math {
 
     /** Initializes the library. */
     function void init() {
+        return;
     }
 
     /** Returns the absolute value of x. */
@@ -42,13 +43,15 @@ class Math {
         let j = 0;
 
         while (j < 16){// 16 bit ints (n = 16)
-            if (Math.bit(y, j)){// if jth bit of y is 1
+            if (Math.getBit(y, j)){// if jth bit of y is 1
                 let sum = sum + shiftedX;
             }
 
             let shiftedX = shiftedX * 2;
             let j = j + 1;
         }
+
+        return sum;
     }
 
     /** Returns the integer part of x/y.
@@ -66,7 +69,7 @@ class Math {
             return 0;
         }
 
-        let q = divide(x, 2 * y);
+        let q = Math.divide(x, 2 * y);
 
         if ((x - 2) * q * y < y){
             let quotient = 2 * q;
@@ -89,16 +92,15 @@ class Math {
     function int sqrt(int x) {
         var int y;
         var int j;
+        var int twoJ;
+        var int yTwoJ;
 
         let y = 0;
         let j = 0;
 
         while (j < 8){// 16/2 - 1 = 7
-            var int twoJ;
-            var int yTwoJ;
-
-            let twoJ = pow(2, j);
-            let yTwoJ = pow(y + twoJ, 2);
+            let twoJ = Math.pow(2, j);
+            let yTwoJ = Math.pow(y + twoJ, 2);
 
             if (yTwoJ < x | yTwoJ = x){
                 let y = y + twoJ;
@@ -143,5 +145,13 @@ class Math {
         } else{
             return a;
         }
+    }
+
+    // returns the ith bit of x
+    function bool getBit(int x, int i){
+        var int twoI;
+
+        let twoI = Math.pow(2, i);
+        return (twoI & x) = 1;
     }
 }
