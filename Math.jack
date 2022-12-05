@@ -154,4 +154,15 @@ class Math {
         let twoI = Math.pow(2, i);
         return (twoI & x) = 1;
     }
+
+    // returns the least significant digit of num
+    function int extractDigit(int num){
+        var int modTen;
+        var int leastSignificant;
+
+        let modTen = Math.divide(num, 10);
+        let leastSignificant = num - (10 * modTen);
+
+        return leastSignificant;
+    }
 }
