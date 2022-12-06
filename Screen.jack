@@ -10,34 +10,180 @@
  * the screen is indexed (0,0).
  */
 class Screen {
+    static Array screen;// array of all screen pixels
+    static bool color;
 
     /** Initializes the Screen. */
     function void init() {
+        let screen = Array.new(16384);
+        let color = true;// black is default draw color
+        
+        return;
     }
 
     /** Erases the entire screen. */
     function void clearScreen() {
+        var int i;
+
+        let i = 0;
+        while (i < 16384){
+            let screen[i] = color;
+        }
+
+        return;
     }
 
     /** Sets the current color, to be used for all subsequent drawXXX commands.
      *  Black is represented by true, white by false. */
     function void setColor(boolean b) {
+        let color = b;
+
+        return;
     }
 
     /** Draws the (x,y) pixel, using the current color. */
     function void drawPixel(int x, int y) {
+        var int drawHere;
+
+        let drawHere = (x / 16) + (y * 32); // two dimensional coord to one dimensional addr
+        let screen[drawHere] = color;
+
+        return;
     }
 
     /** Draws a line from pixel (x1,y1) to pixel (x2,y2), using the current color. */
     function void drawLine(int x1, int y1, int x2, int y2) {
+        var int dx, xStep;
+        var int dy, yStep;
+        var int startX, startY;
+        var int dTmp;
+        var Array delta;
+
+        let dx = x1 - x2;
+        let dy = y1 - y2;
+
+        if (dx = 0){
+            do drawStraight(x1, Math.min(y1, y2), Math.max(y2, y1), false);
+        } else{
+            if (dy = 0){
+                do drawStraight(y1, Math.min(x1, x2), Math.max(x2, x1), true);
+            } else{
+                let delta = Math.reduceFraction(dy, dx);
+                let yStep = delta[0];
+                let xStep = delta[1];
+                let startX = x1;
+                let startY = y1;
+
+                do Screen.drawPixel(x1, y1);
+                do Screen.drawPixel(x2, y2);
+
+                while (~(startX = x2) | ~(startY = y2)){
+                    let startX = Screen.stepX(x1, x2, startX, startY, xStep);
+                    let startY = Screen.stepY(y1, y2, startX, startY, yStep);
+                }
+            }
+        }
+
+        return;
+    }
+
+    function int stepX(int x1, int x2, int startX, int startY, int step){
+        var int dTmp;
+        var int dir;
+        // determine maximum pixels to draw in the x direction
+        // before going in the y direction
+        let dTmp = startX + step;
+        
+        if ((x2 > x1 & x2 < dTmp) | (x1 > x2 & x2 > dTmp)){
+            let dTmp = x2;
+        }
+
+        if (x1 < x2){
+            let dir = 1;
+        }else{
+            let dir = -1;
+        }
+
+        while((x1 < x2 & startX < dTmp) | (x1 > x2 & startX > dTmp)){
+            do Screen.drawPixel(startX, startY);
+            let startX = startX + dir;
+        }
+
+        return startX;
+    }
+
+    function int stepY(int y1, int y2, int startX, int startY, int step){
+        var int dTmp;
+        var int dir;
+
+        let dTmp = startY + step;
+
+        if ((y1 < y2 & y2 < dTmp) | (y1 > y2 & y2 > dTmp)){
+            let dTmp = y2;
+        }
+
+        if (y1 < y2){
+            let dir = 1;
+        }else{
+            let dir = -1;
+        }
+
+        while ((y1 < y2 & startY < dTmp) | (y1 > y2 & startY > dTmp)){
+            do Screen.drawPixel(startX, startY);
+            let startY = startY + dir;
+        }
+
+        return startY;
+    }
+
+    function void drawStraight(int constCoord, int start, int end, bool horiz){
+        var int i;
+
+        let i = start;
+        while (i < end | i = end){
+            if (horiz){
+                do Screen.drawPixel(i, constCoord);
+            } else{
+                do Screen.drawPixel(constCoord, i);
+            }
+
+            let i = i + 1;
+        }
+
+        return;
     }
 
     /** Draws a filled rectangle whose top left corner is (x1, y1)
      * and bottom right corner is (x2,y2), using the current color. */
     function void drawRectangle(int x1, int y1, int x2, int y2) {
+        var int startY;
+
+        let startY = y1;
+        while (startY < y2 | startY = y2){
+            do Screen.drawStraight(startY, x1, x2, true);
+            let startY = startY + 1;
+        }
+
+        return;
     }
 
     /** Draws a filled circle of radius r<=181 around (x,y), using the current color. */
     function void drawCircle(int x, int y, int r) {
+        var int dx;
+        var int dy;
+        var int r2;
+        
+        let r2 = r * r;
+        let dy = 0;
+        
+        while (dy < r | dy = r){
+            let dx = Math.sqrt(r2 - (dy * dy));
+            do Screen.drawStraight(dy, x - dx, x + dx, true);
+            do Screen.drawStraight(-dy, x - dx, x + dx, true);
+
+            let dy = dy + 1;
+        }
+
+        return;
     }
 }

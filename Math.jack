@@ -165,4 +165,37 @@ class Math {
 
         return leastSignificant;
     }
+
+    function int mod(int base, int factor){
+        var int quotient;
+        var int remainder;
+
+        let quotient = Math.divide(base, factor);
+        let remainder = base - (quotient * factor);
+
+        return remainder;
+    }
+
+    function Array reduceFraction(int num, int den){
+        var Array fraction;
+        var int i;
+        var int min;
+
+        let fraction = Array.new(2);
+        let fraction[0] = num;
+        let fraction[1] = den;
+        let min = Math.min(num, den);
+
+        let i = 2;
+        while (i < min | i = min){
+            if (Math.mod(fraction[0], i) = 0 & Math.mod(fraction[1], i) = 0){
+                let fraction[0] = Math.divide(fraction[0], i);
+                let fraction[1] = Math.divide(fraction[1], i);
+            }
+
+            let i = i + 1;
+        }
+
+        return fraction;
+    }
 }
