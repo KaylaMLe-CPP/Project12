@@ -9,26 +9,74 @@
  * consists of 32,768 words, each holding a 16-bit binary number.
  */ 
 class Memory {
+    static Array memBlocks;
+    static int nextEmpty;
 
     /** Initializes the class. */
     function void init() {
+        let memBlocks = 2048;
+        let memBlocks[0] = 14335;// heapLength
+        let nextEmpty[1] = null;// next
+
+        return;
     }
 
     /** Returns the RAM value at the given address. */
     function int peek(int address) {
+        return memBlocks[address];
     }
 
     /** Sets the RAM value at the given address to the given value. */
     function void poke(int address, int value) {
+        let memBlocks[address] = value;
+
+        return;
     }
 
     /** Finds an available RAM block of the given size and returns
      *  a reference to its base address. */
     function int alloc(int size) {
+        var Array newBlock;
+        var Array prevBlock;
+        var Array allocBlock;
+
+        // find block space in next segment
+        let prevBlock = null;
+        let newBlock = memBlocks;
+        while (~(newBlock = null) & newBlock[0] < size){
+            let prevBlock = newBlock;
+            let newBlock = newBlock[1];
+        }
+
+        // extra space in the segment is left in allocBlock
+        let allocBlock = newBlock + size + 2;// size for elems and info
+        let allocBlock[0] = newBlock[0] - size - 2;
+        let allocBlock[1] = newBlock[1];
+        // separate needed space into newBlock
+        let newBlock[0] = size;
+        let newBlock[1] = null;
+
+        // insert new block
+        // case 1: no prev block
+        if (prevBlock = null){
+            let memBlocks = allocBlock;
+        } else{// case 2: at least one prev block
+            let prevBlock[1] = allocBlock;
+        }
+
+        return newBlock + 2;
     }
 
     /** De-allocates the given object (cast as an array) by making
      *  it available for future allocations. */
     function void deAlloc(Array o) {
+        var Array segment;
+
+        // remove from linked list (?)
+        let segment = o - 2;
+        let segment[1] = memBlocks;
+        let memBlocks = segment;
+
+        return;
     }    
 }

@@ -10,18 +10,60 @@ class Sys {
 
     /** Performs all the initializations required by the OS. */
     function void init() {
+        do Math.init();
+        do Output.init();
+        do Screen.init();
+        do Keyboard.init();
+        do Memory.init();
+        do Main.main();
+        
+        do Sys.halt();
+        return;
+
     }
 
     /** Halts the program execution. */
+    // this implementation of halt behaves more like a breakpoint
+    // not an exception
     function void halt() {
+        var bool wait;
+        var Keyboard k;
+
+        let wait = true;
+        while (wait){
+            if (~(Keyboard.keyPressed() = 0)){
+                let wait = false;
+            }
+        }
+
+        return;
     }
 
     /** Waits approximately duration milliseconds and returns.  */
     function void wait(int duration) {
+        var int clockCycles;
+
+        let clockCycles = 0;
+        while (duration > 0){
+            // approx clock speed of the vm emulator (very slow) (adjust for better machines)
+            while (clockCycles < 1){
+                let clockCycles = clockCycles + 1;
+            }
+
+            let clockCycles = 0;
+            let duration = duration - 1;
+        }
+
+        return;
     }
 
     /** Displays the given error code in the form "ERR<errorCode>",
      *  and halts the program's execution. */
     function void error(int errorCode) {
+        do Output.printString("ERR");
+        do Output.printInt(errorCode);
+        do Sys.halt();
+
+        return;
     }
 }
